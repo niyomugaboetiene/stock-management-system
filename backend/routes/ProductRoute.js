@@ -73,7 +73,7 @@ router.put('/update/:id', async (req, res) => {
 
 
          await connection.query(
-                `UPDATE product SET productCode = ?, productName = ?, category = ?, quantityInStock = ?, unitPrice = ?
+                `UPDATE product SET productCode = ?, productName = ?, category = ?, quantityInStock = ?, unitPrice = ?,
                  supplierName = ?, dateReceived = ?, warehouse_id = ? WHERE id = ?
                 `, [updatedFiled, id]
          );
