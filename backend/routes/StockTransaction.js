@@ -113,7 +113,7 @@ router.get('/report/daily', async (req, res) => {
     try {
         const sql = `
            SELECT * FROM product p JOIN StockTransaction s WHERE p.id = s.id 
-        `
+        `;
     }
 })
 
