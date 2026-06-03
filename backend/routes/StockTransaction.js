@@ -12,6 +12,18 @@ router.post('/addNew', async (req, res) => {
             return res.status(400).json({ message: 'Fill out missing fields' });
         }
 
+        const stockIn = await connection.query(
+            `SELECT * FROM product WHERE product_id = ?`, [product_id]
+        );
+
+        const quantity = stockIn.reduce((total, item) => {
+            return total + item.quantityInStock
+        }, 0);
+
+        if (quantityMoved > quantity) {
+            return res.status(403).json({ message: `Not enough in stock your stock in ${quantity}`})
+        }
+
         const newStock = await connection.query(
             `INSERT INTO StockTransaction(transactionDate, quantityMoved, transactionType, product_id)
              VALUES(?, ?, ?, ?)
@@ -80,6 +92,17 @@ router.put('/update/:id', async (req, res) => {
 
         values.push(id);
 
+        const stockIn = await connection.query(
+            `SELECT * FROM product WHERE product_id = ?`, [product_id]
+        );
+
+        const quantity = stockIn.reduce((total, item) => {
+            return total + item.quantityInStock
+        }, 0);
+
+        if (quantityMoved > quantity) {
+            return res.status(403).json({ message: `Not enough in stock your stock in ${quantity}`})
+        }
         const sql = `
           UPDATE StockTransaction SET ${fields.join(",")}
           WHERE id = ?
@@ -150,4 +173,16 @@ router.get('/report/monthly', async (req, res) => {
         console.error(err);
     }
 });
+
+router.get('/totals', async (req, res) => {
+    try {
+        const [rows] = await connection.query(
+            `SELECT COUNT(*) FROM StockTransaction`
+        );
+
+        return res.status(200).json({ message: 'Totals', total: rows });
+    } catch (err) {
+        console.error(err);
+    }
+})
 export default router;
