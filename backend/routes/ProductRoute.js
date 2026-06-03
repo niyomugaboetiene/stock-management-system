@@ -24,3 +24,5 @@ router.post('/addNew', async (req, res) => {
         console.error(err);
     }
 });
+
+export default router;
