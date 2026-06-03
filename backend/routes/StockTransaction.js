@@ -11,5 +11,15 @@ router.post('/addNew', async (req, res) => {
         if (!transactionDate || !quantityMoved || !transactionType || !product_id) {
             return res.status(400).json({ message: 'Fill out missing fields' });
         }
+
+        const newStock = await connection.query(
+            `INSERT INTO StockTransaction(transactionDate, quantityMoved, transactionType, product_id)
+             VALUES(?, ?, ?, ?)
+            `
+        );
+
+        return res.status(201).json({ message: 'Added successfully', data: newStock.values });
+    } catch (err) {
+        console.error(err);
     }
-})
+});
