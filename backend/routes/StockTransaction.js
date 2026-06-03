@@ -15,7 +15,7 @@ router.post('/addNew', async (req, res) => {
         const newStock = await connection.query(
             `INSERT INTO StockTransaction(transactionDate, quantityMoved, transactionType, product_id)
              VALUES(?, ?, ?, ?)
-            `
+            `, [transactionDate, quantityMoved, transactionType, product_id]
         );
 
         return res.status(201).json({ message: 'Added successfully', data: newStock.values });
@@ -23,3 +23,5 @@ router.post('/addNew', async (req, res) => {
         console.error(err);
     }
 });
+
+export default router;
