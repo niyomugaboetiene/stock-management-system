@@ -74,9 +74,14 @@ router.put('/update/:id', async (req, res) => {
 
          await connection.query(
                 `UPDATE product SET productCode = ?, productName = ?, category = ?, quantityInStock = ?, unitPrice = ?
-                supplierName = ?, dateReceived = ?, warehouse_id = ? WHERE id = ?
+                 supplierName = ?, dateReceived = ?, warehouse_id = ? WHERE id = ?
                 `, [updatedFiled, id]
-         )
+         );
+
+         return res.status(200).json({ message: 'Updated successfully' });
+    } catch (err) {
+        console.error(err);
     }
-})
+});
+
 export default router;
