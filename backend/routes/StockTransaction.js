@@ -12,13 +12,11 @@ router.post('/addNew', async (req, res) => {
             return res.status(400).json({ message: 'Fill out missing fields' });
         }
 
-        const stockIn = await connection.query(
-            `SELECT * FROM product WHERE product_id = ?`, [product_id]
+        const [stockIn] = await connection.query(
+            `SELECT * FROM product WHERE id = ?`, [product_id]
         );
 
-        const quantity = stockIn.reduce((total, item) => {
-            return total + item.quantityInStock
-        }, 0);
+        const quantity = stockIn[0].quantityInStock;
 
         if (quantityMoved > quantity) {
             return res.status(403).json({ message: `Not enough in stock your stock in ${quantity}`})
@@ -92,17 +90,16 @@ router.put('/update/:id', async (req, res) => {
 
         values.push(id);
 
-        const stockIn = await connection.query(
-            `SELECT * FROM product WHERE product_id = ?`, [product_id]
+        const [stockIn] = await connection.query(
+            `SELECT * FROM product WHERE id = ?`, [product_id]
         );
 
-        const quantity = stockIn.reduce((total, item) => {
-            return total + item.quantityInStock
-        }, 0);
+        const quantity = stockIn[0].quantityInStock;
 
         if (quantityMoved > quantity) {
             return res.status(403).json({ message: `Not enough in stock your stock in ${quantity}`})
         }
+
         const sql = `
           UPDATE StockTransaction SET ${fields.join(",")}
           WHERE id = ?
