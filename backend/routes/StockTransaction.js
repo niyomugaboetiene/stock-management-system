@@ -183,8 +183,21 @@ router.get('/totals', async (req, res) => {
              FROM StockTransaction WHERE transactionType = 'in'
             `
         );
+        const [outRows] = await connection.query(
+            `SELECT SUM(quantityMoved) AS totalOut
+             FROM StockTransaction WHERE transactionType = 'out'
+            `
+        );
 
-        return res.status(200).json({ message: 'Totals', total: rows });
+        const [totals] = await connection.query(
+            `SELECT COUNT(*) AS totalProducts FROM product`
+        );
+
+        return res.status(200).json({ 
+            totalIn: inRows[0].totalIn || 0,
+            totalOut: outRows[0].totalOut || 0,
+            totalProduct: totals[0].totalProduct || 0
+        });
     } catch (err) {
         console.error(err);
     }
