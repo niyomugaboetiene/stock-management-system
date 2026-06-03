@@ -49,5 +49,63 @@ router.get('/list/:id', async (req, res) => {
     }
 });
 
+router.put('/update/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        
+        const { transactionDate, quantityMoved, transactionType, product_id } = req.body;
+
+        let fields = [];
+        let values = [];
+
+        if (transactionDate) {
+            fields.push("transactionDate = ?");
+            values.push(transactionDate);
+        }
+
+        if (quantityMoved) {
+            fields.push("quantityMoved = ?");
+            values.push(quantityMoved);
+        }
+
+        if (transactionType) {
+            fields.push("transactionType = ?");
+            values.push(transactionType);
+        }
+
+        if (product_id) {
+            fields.push("product_id = ?");
+            values.push(product_id);
+        }
+
+        values.push(id);
+
+        const sql = `
+          UPDATE StockTransaction SET ${fields.join(",")}
+          WHERE id = ?
+        `;
+
+        await connection.query(sql, values);
+        return res.status(200).json({ message: 'Updated successfully' });
+    }  catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal server error'})
+    }
+});
+
+router.delete('/delete/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        await connection.query(
+            `DELETE FROM StockTransaction WHERE id = ?`, [id]
+        );
+
+        return res.status(200).json({ message: 'Deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 export default router;
