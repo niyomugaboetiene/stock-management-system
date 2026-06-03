@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         await connection.query(
-            `INSERT INTO user(username, password) VALUES(?, ?)`[username, hashedPassword]
+            `INSERT INTO user(username, password) VALUES(?, ?)`, [username, hashedPassword]
         );
 
         return res.status(201).json({ message: 'New user created successfully' });
@@ -42,6 +42,23 @@ router.post('/login', async (req, res) => {
             return res.status(404).json({ message: 'No username found' });
         }
 
-        const 
+        const hashedPassword = isUsernameExist[0].password;
+        const isPasswordTrue = await bcrypt.compare(password, hashedPassword);
+
+        if (!isPasswordTrue) {
+            return res.status(401).json({ message: 'Password incorrect' });
+        }
+
+        req.session.user = {
+            id: isUsernameExist[0].id,
+            username: isUsernameExist[0].username
+        }
+
+        return res.status(200).json({ message: 'Logged in successfully', user: req.session.user });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal server error' });
     }
-})
+});
+
+export default router;
