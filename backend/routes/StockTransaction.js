@@ -176,7 +176,7 @@ router.get('/report/monthly', async (req, res) => {
     }
 });
 
-router.get('/totals', async (req, res) => {
+router.get('/report/totals', async (req, res) => {
     try {
         const [inRows] = await connection.query(
             `SELECT SUM(quantityMoved) AS totalIn
@@ -196,7 +196,7 @@ router.get('/totals', async (req, res) => {
         return res.status(200).json({ 
             totalIn: inRows[0].totalIn || 0,
             totalOut: outRows[0].totalOut || 0,
-            totalProduct: totals[0].totalProduct || 0
+            totalProduct: totals[0].totalProducts || 0
         });
     } catch (err) {
         console.error(err);
