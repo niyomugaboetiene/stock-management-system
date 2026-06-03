@@ -13,7 +13,15 @@ router.post('/register', async (req, res) => {
         }
 
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash();
+        const hashedPassword = await bcrypt.hash(password, salt);
 
+        await connection.query(
+            `INSERT INTO user(username, password) VALUES(?, ?)`[username, hashedPassword]
+        );
+
+        return res.status(201).json({ message: 'New user created successfully' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal server error' });
     }
-})
+});
