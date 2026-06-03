@@ -53,5 +53,30 @@ router.get('/list/:id', async (req, res) => {
     } catch (err) {
         console.error(err);
     }
+});
+
+router.put('/update/:id', async (req, res) => {
+    try {
+         const {  productCode, productName, category, quantityInStock, unitPrice,supplierName, dateReceived, warehouse_id } = req.body;
+
+         let updatedFiled = [];
+         const id = req.params.id;
+
+         if (productCode) updatedFiled.push(productCode);
+         if (productName) updatedFiled.push(productName);
+         if (quantityInStock) updatedFiled.push(quantityInStock);
+         if (category) updatedFiled.push(category);
+         if (unitPrice) updatedFiled.push(unitPrice);
+         if (supplierName) updatedFiled.push(supplierName);
+         if (dateReceived) updatedFiled.push(dateReceived);
+         if (warehouse_id) updatedFiled.push(warehouse_id);
+
+
+         await connection.query(
+                `UPDATE product SET productCode = ?, productName = ?, category = ?, quantityInStock = ?, unitPrice = ?
+                supplierName = ?, dateReceived = ?, warehouse_id = ? WHERE id = ?
+                `, [updatedFiled, id]
+         )
+    }
 })
 export default router;
