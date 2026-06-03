@@ -25,3 +25,23 @@ router.post('/register', async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+router.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Internal server error' });
+        }
+
+        const [isUsernameExist] = await connection.query(
+            `SELECT * FROM user WHERE username = ?`, [username]
+        );
+
+        if (isUsernameExist.length === 0) {
+            return res.status(404).json({ message: 'No username found' });
+        }
+
+        const 
+    }
+})
