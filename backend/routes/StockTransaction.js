@@ -111,10 +111,43 @@ router.delete('/delete/:id', async (req, res) => {
 // report
 router.get('/report/daily', async (req, res) => {
     try {
-        const sql = `
-           SELECT * FROM product p JOIN StockTransaction s WHERE p.id = s.id 
-        `;
+        const [rows] = await connection.query( `
+           SELECT * FROM product p JOIN StockTransaction s on p.id = s.product_id
+           WHERE DATE(s.transactionDate) = CURDATE()
+        `);
+
+        return res.status(200).json({ message: 'Daily report', report: rows });
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+router.get('/report/weeky', async (req, res) => {
+    try {
+        const [rows] = await connection.query(
+            `SELECT * FROM product p JOIN StockTransaction s on p.id = s.product_id
+             WHERE s.transactionDate >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            `
+        );
+        
+        return res.status(200).json({ message: 'Weekly report', report: rows });
+    } catch (err) {
+        console.error(err);
     }
 })
 
+router.get('/report/monthly', async (req, res) => {
+    try {
+        const [rows] = await connection.query(
+            `SELECT * FROM product p JOIN StockTransaction s on p.id = s.product_id
+             WHERE MONTH(s.transactionDate) = MONTH(CURDATE())
+             AND YEAR(s.transactionDate) = YEAR(CURDATE())
+            `
+        );
+
+        return res.status(200).json({ message: 'Monthly report', month: rows });
+    } catch (err) {
+        console.error(err);
+    }
+});
 export default router;
