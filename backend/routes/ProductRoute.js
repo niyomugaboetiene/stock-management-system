@@ -58,26 +58,59 @@ router.get('/list/:id', async (req, res) => {
 router.put('/update/:id', async (req, res) => {
     try {
          const {  productCode, productName, category, quantityInStock, unitPrice,supplierName, dateReceived, warehouse_id } = req.body;
-
-         let updatedFiled = [];
+        
          const id = req.params.id;
 
-         if (productCode) updatedFiled.push(productCode);
-         if (productName) updatedFiled.push(productName);
-         if (quantityInStock) updatedFiled.push(quantityInStock);
-         if (category) updatedFiled.push(category);
-         if (unitPrice) updatedFiled.push(unitPrice);
-         if (supplierName) updatedFiled.push(supplierName);
-         if (dateReceived) updatedFiled.push(dateReceived);
-         if (warehouse_id) updatedFiled.push(warehouse_id);
+         let fields = []
+         let values = []
 
+         if (productCode) {
+            fields.push("productCode = ?")
+            values.push(productCode)
+         }
+         
+         if (productName) {
+            fields.push("productName = ?")
+            values.push(productName)
+         }
+         
+         if (category) {
+            fields.push("category = ?")
+            values.push(category)
+         }
+         
+         if (unitPrice) {
+            fields.push("unitPrice = ?")
+            values.push(unitPrice)
+         }
+         
+         if (quantityInStock) {
+            fields.push("quantityInStock = ?")
+            values.push(quantityInStock)
+         }
+         
+         if (supplierName) {
+            fields.push("supplierName = ?")
+            values.push(supplierName)
+         }
+         
+         if (dateReceived) {
+            fields.push("dateReceived = ?")
+            values.push(dateReceived)
+         }
+         
+         if (warehouse_id) {
+            fields.push("warehouse_id = ?")
+            values.push(warehouse_id)
+         }
+         values.push(id);
 
-         await connection.query(
-                `UPDATE product SET productCode = ?, productName = ?, category = ?, quantityInStock = ?, unitPrice = ?,
-                 supplierName = ?, dateReceived = ?, warehouse_id = ? WHERE id = ?
-                `, [updatedFiled, id]
-         );
+        const sql = `
+           UPDATE product SET ${fields.join(",")}
+           WHERE id = ?
+        `;
 
+         await connection.query(sql, values);
          return res.status(200).json({ message: 'Updated successfully' });
     } catch (err) {
         console.error(err);
