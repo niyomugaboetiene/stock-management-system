@@ -201,5 +201,5 @@ router.get('/report/totals', async (req, res) => {
     } catch (err) {
         console.error(err);
     }
-})
+});
 export default router;
