@@ -6,17 +6,17 @@ const router = express.Router();
 router.post('/addNew', async (req, res) => {
     try {
         // productCode, productName, category, quantityInStock, unitPrice,supplierName, dateReceived
-        const {  productCode, productName, category, quantityInStock, unitPrice,supplierName, dateReceived } = req.body;
+        const {  productCode, productName, category, quantityInStock, unitPrice,supplierName, dateReceived, warehouse_id } = req.body;
 
-        if (!productCode || productName || !category || !quantityInStock || !unitPrice || !supplierName || !dateReceived) {
+        if (!productCode || !productName || !category || !quantityInStock || !unitPrice || !supplierName) {
             return res.status(400).json({ message: 'Fill out missing fields' });
         }
 
         const newProduct = await connection.query(
             `INSERT INTO
-             product(productCode, productName, category, quantityInStock, unitPrice,supplierName, dateReceived)
-             VALUES(?, ?, ?, ?, ?, ?, ?)
-             `, [productCode, productName, category, quantityInStock, unitPrice, supplierName, dateReceived]
+             product(productCode, productName, category, quantityInStock, unitPrice,supplierName, dateReceived, warehouse_id)
+             VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+             `, [productCode, productName, category, quantityInStock, unitPrice, supplierName, dateReceived, warehouse_id]
         );
 
         return res.status(201).json({ message: 'Added successfully', new: newProduct });
