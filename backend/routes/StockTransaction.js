@@ -24,4 +24,30 @@ router.post('/addNew', async (req, res) => {
     }
 });
 
+router.get('/list', async (req, res) => {
+    try {
+        const [list] = await connection.query(
+            `SELECT * FROM StockTransaction`
+        );
+
+        return res.status(200).json({ message: 'List', list: list });
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+router.get('/list/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const [list] = await connection.query(
+            `SELECT * FROM StockTransaction WHERE id = ?`, [id]
+        );
+
+        return res.status(200).json({ message: 'List', list: list });
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+
 export default router;
