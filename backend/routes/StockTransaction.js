@@ -16,10 +16,12 @@ router.post('/addNew', async (req, res) => {
             `SELECT * FROM product WHERE id = ?`, [product_id]
         );
 
-        const quantity = stockIn[0].quantityInStock;
+        if (transactionType =='out') {
+            const quantity = stockIn[0].quantityInStock;
 
-        if (quantityMoved > quantity) {
-            return res.status(403).json({ message: `Not enough in stock your stock in ${quantity}`})
+               if (quantityMoved > quantity) {
+               return res.status(403).json({ message: `Not enough in stock your stock in ${quantity}`})
+        }
         }
 
         const newStock = await connection.query(
@@ -94,11 +96,13 @@ router.put('/update/:id', async (req, res) => {
             `SELECT * FROM product WHERE id = ?`, [product_id]
         );
 
-        const quantity = stockIn[0].quantityInStock;
+       if (transactionType == 'out') {
+             const quantity = stockIn[0].quantityInStock;
 
-        if (quantityMoved > quantity) {
-            return res.status(403).json({ message: `Not enough in stock your stock in ${quantity}`})
-        }
+            if (quantityMoved > quantity) {
+               return res.status(403).json({ message: `Not enough in stock your stock in ${quantity}`})
+           }
+       }
 
         const sql = `
           UPDATE StockTransaction SET ${fields.join(",")}
@@ -174,7 +178,7 @@ router.get('/report/monthly', async (req, res) => {
 router.get('/totals', async (req, res) => {
     try {
         const [rows] = await connection.query(
-            `SELECT COUNT(*) FROM StockTransaction`
+            `SELECT  FROM StockTransaction`
         );
 
         return res.status(200).json({ message: 'Totals', total: rows });
