@@ -16,16 +16,11 @@ router.post('/addNew', async (req, res) => {
             `SELECT * FROM product WHERE id = ?`, [product_id]
         );
         
-        const [stockInSecond] = await connection.query(
-            `SELECT * FROM StockTransaction WHERE product_id = ?`, [product_id]
-        );
 
         if (transactionType =='out') {
                const quantity = stockIn[0].quantityInStock;
-               const secondQuantity = stockInSecond[0].quantityMoved;
-               const total = quantity + secondQuantity;
 
-               if (quantityMoved > total) {
+               if (quantityMoved > quantity) {
                return res.status(403).json({ message: `Not enough in stock your stock in ${quantity}`})
         }
         }
