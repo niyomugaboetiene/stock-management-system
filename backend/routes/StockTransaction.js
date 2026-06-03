@@ -178,8 +178,10 @@ router.get('/report/monthly', async (req, res) => {
 
 router.get('/totals', async (req, res) => {
     try {
-        const [rows] = await connection.query(
-            `SELECT  FROM StockTransaction`
+        const [inRows] = await connection.query(
+            `SELECT SUM(quantityMoved) AS totalIn
+             FROM StockTransaction WHERE transactionType = 'in'
+            `
         );
 
         return res.status(200).json({ message: 'Totals', total: rows });
