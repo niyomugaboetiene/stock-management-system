@@ -117,4 +117,17 @@ router.put('/update/:id', async (req, res) => {
     }
 });
 
+
+router.delete('/delete/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        await connection.query(
+            `DELETE FROM product WHERE id = ?`, [id]
+        );
+
+        return res.status(200).json({ message: 'DELETEd successfully'})
+    } catch (err) {
+        console.error(err);
+    }
+})
 export default router;
